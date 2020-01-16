@@ -17,23 +17,19 @@ namespace YIME.PlayGroundConsole
     {
         static void Main(string[] args)
         {
-//            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo("en-us");
             RimeTraits traits = new RimeTraits();
-            traits.app_name = "YIME.PlayGround";
+            traits.app_name = "YCIME";
             
-            Rime.RimeSetup(ref traits);
+            //Rime.RimeSetup(ref traits);
             Console.WriteLine("初始化1");
             Rime.RimeInitialize(IntPtr.Zero);
             Console.WriteLine("初始化2");
-            Rime.RimeSetNotificationHandler(Handler, IntPtr.Zero);
+            //Rime.RimeSetNotificationHandler(Handler, IntPtr.Zero);
             if (Rime.RimeStartMaintenance(true))
             {
-
-                Rime.RimeJoinMaintenanceThread();
-
+               Rime.RimeJoinMaintenanceThread();
             }
-
-
             var rimesessionid = Rime.RimeCreateSession();
             Console.WriteLine("Session ID: " + rimesessionid);
             
@@ -51,12 +47,14 @@ namespace YIME.PlayGroundConsole
                 commit.Init();
                 status.Init();
                 context.Init();
-
+           
                 Rime.RimeGetCommit(rimesessionid, ref commit);
                 Rime.RimeGetStatus(rimesessionid, ref status);
+                status.is_simplified = true;
+                Rime.RimeFreeStatus(ref status);
                 Rime.RimeGetContext(rimesessionid, ref context);
                 Console.WriteLine("Commit:" + commit.text);
-                Console.WriteLine($"Status: {status.is_composing},{status.is_ascii_mode}, {status.schema_name}");
+                Console.WriteLine($"Status: {status.is_composing},{status.is_ascii_mode}, {status.is_simplified},{status.is_traditional},{status.schema_name}");
                 Console.WriteLine($"Context: {context.commit_text_preview}, {context.composition.preedit}");
                 var candiates =
                     RimeApi.Common.StuctArrayFromIntPtr<RimeCandidate>(context.menu.candidates,
